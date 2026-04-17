@@ -21,6 +21,9 @@ app.use("/api/subscribe", subscribeRoutes); // 🔥 هادي كانت ناقصة
 app.use("/api/contact", contactRoutes);
 app.use("/api/users", userRoutes);
 // ✅ MongoDB Connection
+app.get("/", (req, res) => {
+  res.send("SERVER WORKING 🚀");
+});
 mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log("MongoDB connected 🔥"))
   .catch(err => console.log("Mongo error:", err));

@@ -39,8 +39,16 @@ router.post("/", async (req, res) => {
 
 
 // 🔥 GET ALL ORDERS (Dashboard)
-router.get("/", (req, res) => {
-  res.send("OK WORKING");
+router.get("/", async (req, res) => {
+  try {
+    const orders = await Order.find().sort({ createdAt: -1 });
+
+    res.json(orders);
+
+  } catch (err) {
+    console.error("❌ FETCH ORDERS ERROR:", err);
+    res.status(500).json({ error: "Server error" });
+  }
 });
 
 
