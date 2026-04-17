@@ -13,15 +13,11 @@ const app = express();
 
 // ✅ Middleware
 app.use(cors({
-  origin: [
-    "http://localhost:5173",
-    "https://store-brosky.vercel.app"
-  ],
-  methods: ["GET", "POST", "PUT", "DELETE"],
+  origin: "https://store-brosky.vercel.app",
+  methods: ["GET", "POST", "DELETE", "PUT"],
   credentials: true
 }));
 
-app.options("*", cors());
 app.use(express.json());
 
 // ✅ Routes
