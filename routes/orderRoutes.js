@@ -36,22 +36,6 @@ router.post("/", async (req, res) => {
     res.status(500).json({ error: "Server error" });
   }
 });
-
-
-// 🔥 GET ALL ORDERS (Dashboard)
-router.get("/", async (req, res) => {
-  try {
-    const orders = await Order.find().sort({ createdAt: -1 });
-
-    res.json(orders);
-
-  } catch (err) {
-    console.error("❌ FETCH ORDERS ERROR:", err);
-    res.status(500).json({ error: "Server error" });
-  }
-});
-
-
 // 🔥 GET SINGLE ORDER (optional - future)
 router.get("/:id", async (req, res) => {
   try {
@@ -67,6 +51,14 @@ router.get("/:id", async (req, res) => {
     res.status(500).json({ error: "Server error" });
   }
 });
+
+// 🔥 GET ALL ORDERS (Dashboard)
+router.get("/", (req, res) => {
+  res.send("ORDERS ROUTE WORKING ✅");
+});
+
+
+
 
 
 // 🔥 DELETE ORDER (Dashboard later)
