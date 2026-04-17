@@ -3,13 +3,11 @@ import Order from "../models/Order.js";
 
 const router = express.Router();
 
-
 // 🔥 CREATE ORDER
 router.post("/", async (req, res) => {
   try {
     const { items, total, customer } = req.body;
 
-    // ✅ validation بسيط
     if (!items || items.length === 0) {
       return res.status(400).json({ error: "No items provided" });
     }
@@ -18,12 +16,7 @@ router.post("/", async (req, res) => {
       return res.status(400).json({ error: "Missing customer info" });
     }
 
-    const order = new Order({
-      items,
-      total,
-      customer,
-    });
-
+    const order = new Order({ items, total, customer });
     await order.save();
 
     res.status(201).json({
@@ -32,11 +25,48 @@ router.post("/", async (req, res) => {
     });
 
   } catch (err) {
-    console.error("❌ ORDER ERROR:", err);
+    console.error(err);
     res.status(500).json({ error: "Server error" });
   }
 });
-// 🔥 GET SINGLE ORDER (optional - future)
+
+// 🔥 GET ALL ORDERS ✅ (خاصها تجي قبل)
+router.get("/", async (req, res) => {
+  try {
+    const orders = await Order.find().sort({ createdAt: -1 });
+    res.json(orders);
+  } catch (err) {
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
+// 🔥 STATS (خاصها تجي قبل :id)
+router.get("/stats/chart", async (req, res) => {
+  try {
+    const orders = await Order.find();
+
+    const data = {};
+
+    orders.forEach((o) => {
+      const date = new Date(o.createdAt).toLocaleDateString();
+
+      if (!data[date]) data[date] = 0;
+      data[date]++;
+    });
+
+    const chartData = Object.keys(data).map((date) => ({
+      date,
+      orders: data[date],
+    }));
+
+    res.json(chartData);
+
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// 🔥 GET SINGLE ORDER (خاصها تكون آخر حاجة)
 router.get("/:id", async (req, res) => {
   try {
     const order = await Order.findById(req.params.id);
@@ -52,57 +82,14 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-// 🔥 GET ALL ORDERS (Dashboard)
-router.get("/", async (req, res) => {
-  try {
-    const orders = await Order.find().sort({ createdAt: -1 });
-    res.json(orders);
-  } catch (err) {
-    res.status(500).json({ error: "Server error" });
-  }
-});
-
-
-
-
-// 🔥 DELETE ORDER (Dashboard later)
+// 🔥 DELETE
 router.delete("/:id", async (req, res) => {
   try {
     await Order.findByIdAndDelete(req.params.id);
-
     res.json({ message: "Order deleted" });
-
   } catch (err) {
     res.status(500).json({ error: "Server error" });
   }
 });
 
-router.get("/stats/chart", async (req, res) => {
-  try {
-    const orders = await Order.find();
-
-    const data = {};
-
-    orders.forEach((o) => {
-      const date = new Date(o.createdAt).toLocaleDateString();
-
-      if (!data[date]) {
-        data[date] = 0;
-      }
-
-      data[date]++;
-    });
-
-    // 🔄 نحولوها array
-    const chartData = Object.keys(data).map((date) => ({
-      date,
-      orders: data[date]
-    }));
-
-    res.json(chartData);
-
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
 export default router;
