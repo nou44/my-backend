@@ -36,7 +36,8 @@ router.get("/", async (req, res) => {
     const orders = await Order.find().sort({ createdAt: -1 });
     res.json(orders);
   } catch (err) {
-    res.status(500).json({ error: "Server error" });
+    console.error("🔥 GET ORDERS ERROR:", err); // مهم
+    res.status(500).json({ error: err.message }); // باش نشوفو المشكل
   }
 });
 
