@@ -7,11 +7,12 @@ import orderRoutes from "./routes/orderRoutes.js";
 import subscribeRoutes from "./routes/subscribe.js";
 import contactRoutes from "./routes/contact.js";
 import userRoutes from "./routes/userRoutes.js";
+
 dotenv.config();
 
 const app = express();
 
-// ✅ Middleware
+// ✅ CORS (غير Vercel بحال كان)
 app.use(cors({
   origin: "https://store-brosky.vercel.app",
   methods: ["GET", "POST", "DELETE", "PUT"],
@@ -20,15 +21,18 @@ app.use(cors({
 
 app.use(express.json());
 
-// ✅ Routes
+// ✅ Routes (كيف كانوا)
 app.use("/api/orders", orderRoutes);
-app.use("/api/subscribe", subscribeRoutes); // 🔥 هادي كانت ناقصة
+app.use("/api/subscribe", subscribeRoutes);
 app.use("/api/contact", contactRoutes);
 app.use("/api/users", userRoutes);
-// ✅ MongoDB Connection
+
+// ✅ Test
 app.get("/", (req, res) => {
   res.send("SERVER WORKING 🚀");
 });
+
+// ✅ MongoDB
 mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log("MongoDB connected 🔥"))
   .catch(err => console.log("Mongo error:", err));
